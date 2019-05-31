@@ -15,9 +15,10 @@
 package arun_insurance;
 
 import com.google.common.collect.ImmutableList;
-import java_examples.ArtContract;
-import java_examples.ArtState;
-import net.corda.core.contracts.*;
+import net.corda.core.contracts.CommandData;
+import net.corda.core.contracts.CommandWithParties;
+import net.corda.core.contracts.Contract;
+import net.corda.core.identity.Party;
 import net.corda.core.transactions.LedgerTransaction;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,6 @@ import java.security.PublicKey;
 import java.util.List;
 
 import static net.corda.core.contracts.ContractsDSL.requireSingleCommand;
-import static net.corda.core.contracts.ContractsDSL.requireThat;
 
 /**
  * InsuranceContract is the smart contract for the insurance related
@@ -48,9 +48,18 @@ public class InsuranceContract implements Contract {
                 throw new IllegalArgumentException("Minimum amount to insure is $1");
             }
 
+            String organization = insuranceState.getIssuer().getName().getOrganisationUnit();
+            if (organization == null || organization.isEmpty()) {
+                throw new IllegalArgumentException("Invalid signer - No OU field in the certificate");
+            }
+            if (!organization.equals("issuer")) {
+                throw new IllegalArgumentException("Invalid signer - Signer must belong to Issuer OU");
+            }
             final List<PublicKey> requiredSigners = ImmutableList.of(insuranceState.getIssuer().getOwningKey());
             if (!(tx.getCommands().get(0).getValue() instanceof Commands.Issue)) {
                 throw new IllegalArgumentException("Supported operations are insurance issuance");
+            } else if (requiredSigners.size() != 1) {
+                throw new IllegalArgumentException("More than one issuer cannot issue the insurance");
             } else if (!requiredSigners.get(0).equals(tx.getCommand(0).getSigners().get(0))) {
                 throw new IllegalArgumentException("Transaction not signed by the insurance company");
             }

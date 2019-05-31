@@ -70,7 +70,7 @@ tasks.withType(JavaCompile) {
 task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     directory "./build/nodes"
     node {
-        name "O=Notary,L=India,C=BA"
+        name "O=Notary,L=India,C=BA,OU=notary"
         notary = [validating: false]
         p2pPort 10002
         cordapps = [
@@ -78,7 +78,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         ]
     }
     node {
-        name "O=InsuranceA,L=India,C=BA"
+        name "O=InsuranceA,L=India,C=BA,OU=issuer"
         p2pPort 10003
         rpcSettings {
             address("localhost:10004")
@@ -90,7 +90,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "InsuranceA", password: "1234", permissions: ["ALL"]]]
     }
     node {
-        name "O=InsuranceB,L=India,C=BA"
+        name "O=InsuranceB,L=India,C=BA,OU=issuer"
         p2pPort 10006
         rpcSettings {
             address("localhost:10007")
@@ -102,7 +102,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "InsuranceB", password: "1234", permissions: ["ALL"]]]
     }
     node {
-        name "O=Akash,L=India,C=BA"
+        name "O=Akash,L=India,C=BA,OU=insurer"
         p2pPort 10009
         rpcSettings {
             address("localhost:10010")
@@ -114,7 +114,7 @@ task deployNodesJava(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "Akash", password: "1234", permissions: ["ALL"]]]
     }
     node {
-        name "O=Anil,L=India,C=BA"
+        name "O=Anil,L=India,C=BA,OU=insurer"
         p2pPort 10012
         rpcSettings {
             address("localhost:10013")
